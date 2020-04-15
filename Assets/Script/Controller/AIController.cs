@@ -77,7 +77,7 @@ namespace Script.Controller
 
         private void PatrolBehaviour()
         {
-            Vector3 nextPostion = guardPosition;
+            var nextPostion = guardPosition;
             if (patrolPath != null)
             {
                 if (AtWayPoint())

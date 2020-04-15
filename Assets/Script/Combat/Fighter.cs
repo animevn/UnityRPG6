@@ -72,9 +72,9 @@ namespace Script.Combat
         public void Cancel()
         {
             // ReSharper disable once Unity.PreferAddressByIdToGraphicsParams
-            
             GetComponent<Animator>().SetTrigger("stopAttack");
             target = null;
+            GetComponent<Mover>().Cancel();
         }
 
         public bool CanAttack(GameObject combatTarget)
