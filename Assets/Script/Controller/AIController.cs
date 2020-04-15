@@ -1,5 +1,4 @@
-﻿﻿using System;
-using Script.Combat;
+﻿using Script.Combat;
 using Script.Core;
  using Script.Movement;
  using UnityEngine;
@@ -13,7 +12,8 @@ namespace Script.Controller
         [SerializeField] private float suspisionTime = 2f;
         [SerializeField] private PatrolPath patrolPath;
         [SerializeField] private float waypointTolerance = 1f;
-        [SerializeField] float waypointDwellTime = 3f;
+        [SerializeField] private float waypointDwellTime = 3f;
+        [Range(0, 1)] [SerializeField] private float patrolSpeedFraction = 0.2f;
         
         private Fighter fighter;
         private Health health;
@@ -21,8 +21,8 @@ namespace Script.Controller
         private GameObject player;
         private Vector3 guardPosition;
         private float timeSinceLastSawPlayer = Mathf.Infinity;
-        float timeSinceArrivedAtWaypoint = Mathf.Infinity;
-        private int currentWayPointIndex = 0;
+        private float timeSinceArrivedAtWaypoint = Mathf.Infinity;
+        private int currentWayPointIndex;
 
         private void Start()
         {
@@ -43,18 +43,30 @@ namespace Script.Controller
             if (health.IsDead()) return;
             if (InAttackRange() && fighter.CanAttack(player))
             {
-                timeSinceLastSawPlayer = 0;
-                fighter.Attack(player);
+                AttackBehaviour();
             }
             else if (timeSinceLastSawPlayer < suspisionTime)
             {
-                GetComponent<ActionScheduler>().CancelAction();
+                SuspisionBehaviour();
             }
             else
             {
+                // ReSharper disable once Unity.PreferAddressByIdToGraphicsParams
                 PatrolBehaviour();
             }
             UpdateTimer();
+        }
+
+        private void SuspisionBehaviour()
+        {
+            GetComponent<ActionScheduler>().CancelAction();
+        }
+
+        private void AttackBehaviour()
+        {
+            timeSinceLastSawPlayer = 0;
+            // ReSharper disable once Unity.PreferAddressByIdToGraphicsParams
+            fighter.Attack(player);
         }
 
         private void UpdateTimer()
@@ -79,7 +91,8 @@ namespace Script.Controller
             
             if (timeSinceArrivedAtWaypoint > waypointDwellTime)
             {
-                mover.StartToMoveTo(nextPostion);
+                // ReSharper disable once Unity.PreferAddressByIdToGraphicsParams
+                mover.StartMoveAction(nextPostion, patrolSpeedFraction);
             }
             
         }

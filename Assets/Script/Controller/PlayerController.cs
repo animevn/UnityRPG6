@@ -57,7 +57,7 @@ namespace Script.Controller
             {
                 if (Input.GetMouseButton(0))
                 {
-                    GetComponent<Mover>().StartToMoveTo(hit.point);
+                    GetComponent<Mover>().StartMoveAction(hit.point, 1f);
                 }
 //                Debug.DrawRay(ray.origin, ray.direction * 1000);
                 return true;
